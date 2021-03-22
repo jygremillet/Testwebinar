@@ -1,0 +1,68 @@
+Notes Holder 
+
+- Les fichiers des tables n'ont pas d'entête => principe l'ordre des champs est le même que dans la DB
+- Il manque le script de la table BomCalcTrans et BomCalcTransDetail dans la DB
+- Décallage de schéma pour BomCalcTransDetail
+- Décallage de schéma pour EcoResProduct
+
+ContainerName : dynamics365-financeandoperations
+FolderName : d365-devbox1be080f84d0ba1ec7devaos.cloudax.dynamics.com/Tables
+SupplyChain/Inventory/Main/InventDim/InventDim.csv
+
+
+https://daldemoanalytics.blob.core.windows.net/fsdemoanalytics/ocde/landing/SHA_DepenseDeSante.csv
+
+https://daldemoanalytics.blob.core.windows.net/fsdemoanalytics/ocde/landing/SHA_DepenseDeSante.csv
+
+CREATE USER [your Data Factory name] FROM EXTERNAL PROVIDER;
+
+ALTER ROLE [role name] ADD MEMBER [your Data Factory name];
+
+SELECT 
+    Num_Acc,senc,catv,occutc,obs,obsm,choc,manv,num_veh
+FROM OPENROWSET(
+        BULK 'ocde/landing/*.csv',
+        DATA_SOURCE = 'SrcDatalake',
+        FORMAT = 'CSV', PARSER_VERSION = '2.0',
+        FIRSTROW = 2
+    )
+    WITH (
+        Num_Acc,senc,catv,occutc,obs,obsm,choc,manv,num_veh
+    ) AS nyc
+GROUP BY
+    YEAR(pickup_datetime)
+ORDER BY
+    YEAR(pickup_datetime);
+	
+	
+CREATE LOGIN AdminProject  
+WITH PASSWORD='x94WFEA8em3*Es=u'   
+GO 
+CREATE USER AdminProject  
+WITH DEFAULT_SCHEMA=[ocde]  
+GO 
+	
+x94WFEA8em3*Es=u
+ALTER SERVER ROLE sysadmin ADD MEMBER [alias@domain.com];
+
+CREATE DATABASE SCOPED CREDENTIAL [sqlondemand]
+WITH IDENTITY='SHARED ACCESS SIGNATURE',  
+SECRET = '?sv=2019-12-12&ss=bfqt&srt=c&sp=rwdlacupx&se=2021-06-27T16:48:14Z&st=2021-01-29T09:48:14Z&spr=https&sig=ES03MgP%2BUuWLgW67MF42vLcJMQIJIQLt12B4837yrtE%3D'
+GO
+
+DROP DATABASE SCOPED CREDENTIAL [sqlondemand]
+GO
+
+https://stgparisd365poc.blob.core.windows.net/dynamics365-financeandoperations/d365-devbox1be080f84d0ba1ec7devaos.cloudax.dynamics.com/Tables/Finance/AccountsReceivable/Transaction/CustTrans/CustTrans.csv
+
+DROP LOGIN adminSqlServerless;
+GO
+
+CREATE LOGIN adminSqlServerless
+WITH PASSWORD = 'x94WFEA8em3*Es=u'
+
+CREATE USER adminSqlServerless FROM EXTERNAL PROVIDER;
+
+ALTER ROLE [db_owner] ADD MEMBER adminSqlServerless;
+
+Server=tcp:synparisbihorsprod-ondemand.sql.azuresynapse.net,1433;Initial Catalog=master;Persist Security Info=False;User ID=sqlbiadminuser;Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
